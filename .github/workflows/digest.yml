@@ -8,6 +8,8 @@ on:
         required: false
         type: boolean
         default: false
+  schedule:
+    - cron: '10 2 * * *' # 10:10 Singapore time; fallback for the external 10:00 trigger
 
 concurrency:
   group: ai-flow
@@ -18,9 +20,7 @@ permissions:
   contents: write
 
 jobs:
-  # Paused on 2026-08-15: stop all AI Flow deliveries to Feishu.
   digest:
-    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Check for successful run today
@@ -103,7 +103,14 @@ jobs:
 
       - name: Restore YouTube cookies
         if: steps.daily_guard.outputs.should_run == 'true'
-        run: echo "${{ secrets.YT_COOKIES_BASE64 }}" | base64 -d > cookies.txt
+        env:
+          YT_COOKIES_BASE64: ${{ secrets.YT_COOKIES_BASE64 }}
+        run: |
+          if [ -z "$YT_COOKIES_BASE64" ]; then
+            echo "YT_COOKIES_BASE64 is empty or unset; skipping YouTube cookie restore."
+            exit 0
+          fi
+          printf '%s' "$YT_COOKIES_BASE64" | base64 -d > cookies.txt
 
       - name: Analyze feedback and update preferences
         if: steps.daily_guard.outputs.should_run == 'true'
