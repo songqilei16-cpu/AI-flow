@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "processed_events": {},
+  "short_term": {
+    "topics": {},
+    "formats": {},
+    "values": {},
+    "sources": {}
+  },
+  "long_term": {},
+  "last_daily_run": "2026-11-14T02:54:36Z",
+  "last_weekly_run": "2026-11-13T05:29:16Z",
+  "weekly_snapshots": []
+}
